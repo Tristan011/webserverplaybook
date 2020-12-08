@@ -2,5 +2,5 @@
 
   roles:
     - apache
-    - php
-    - composer
+    - software/php
+    #- composer
