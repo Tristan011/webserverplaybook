@@ -1,0 +1,10 @@
+# RDS database settings
+rds_db_hostname: rds_instance_naming
+rds_db_name: wordpress_database
+rds_db_user: wordpress
+rds_db_password: wordpress
+  
+mysql_port: 3306
+mysql_root_password: root
+
+auto_up_disable: true
