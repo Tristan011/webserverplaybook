@@ -25,41 +25,42 @@
 
 
 - name: s3bucketconfiguratie
-  replace:
+  Replace:
     path: /var/applicatie/index.php
-    regexp: |-
-      $images = scandir('assets/images');
-        foreach($images as $key => $image){
-            if (!in_array($image,array(".",".."))){
-                // First item needs to get the active css class. Otherwise the carousel will not show
-                echo ($key == 2) ? '<div class="carousel-item active">' : '<div class="carousel-item">';
-                echo "<img class='d-block w-100' src='assets/images/$image'/></div>";
-            }
-        }
-    replace: |-
-      require '/var/www/html/vendor/autoload.php';
-        use \Aws\S3\S3Client;
-        use \Aws\S3\Exception\S3Exception;
+    regexp: "{{ varregexp }}"
+    replace: "{{ varreplace }}"
+# blockinfile:
+  #   path: /var/applicatie/index.php
+  #   marker: "{mark}"
+  #   marker_begin: "// first 2 keys in the returned array are . and ..   We will need to filter those!"
+  #   marker_end: "echo "<img class='d-block w-100' src='assets/images/$image'/></div>";"
+  #   block: |
+  #     require '/var/www/html/vendor/autoload.php';
+  #       use \Aws\S3\S3Client;
+  #       use \Aws\S3\Exception\S3Exception;
 
-        $bucket = 's3phpimages2';
-        $s3 = new S3Client([
-                'version' => 'latest',
-                'region'  => 'us-east-1'
-        ]);
-        try {
-                $images = $s3->getIterator('ListObjects', array(
-                        'Bucket' => $bucket
-                        //'Delimiter' => '/',
-                        //'Prefix' => '/images/'
-                ));
-                $name = array();
-                foreach ($images as $photos){
-                        $names = $photos['Key'];
-                        array_push($name, $names);
-                }
-                foreach($name as $key => $image){
-                        echo ($key == 0) ? '<div class="carousel-item active">' : '<div class="carousel-item">';
-                        echo "<img class='d-block w-100' src='//s3phpimages.s3.amazonaws.com/$image'/></div>";
-                        }
-                } catch (S3Exception $e) { echo $e->getMessage() . PHP_EOL;
-          }
+  #       $bucket = 's3phpimages2';
+  #       $s3 = new S3Client([
+  #               'version' => 'latest',
+  #               'region'  => 'us-east-1'
+  #       ]);
+  #       try {
+  #               $images = $s3->getIterator('ListObjects', array(
+  #                       'Bucket' => $bucket
+  #                       //'Delimiter' => '/',
+  #                       //'Prefix' => '/images/'
+  #               ));
+  #               $name = array();
+  #               foreach ($images as $photos){
+  #                       $names = $photos['Key'];
+  #                       array_push($name, $names);
+  #               }
+  #               foreach($name as $key => $image){
+  #                       echo ($key == 0) ? '<div class="carousel-item active">' : '<div class="carousel-item">';
+  #                       echo "<img class='d-block w-100' src='//s3phpimages.s3.amazonaws.com/$image'/></div>";
+  #                       }
+  #               } catch (S3Exception $e) { echo $e->getMessage() . PHP_EOL;
+  #         }
+  #   state: present
+
+      
