@@ -1,1 +1,65 @@
 ---
+- name: "prerequisite"
+  package:
+    name: software-properties-common
+    state: latest
+- name: "Add repository for PHP 7.3."
+  apt_repository:
+    repo: ppa:ondrej/php
+- name: Install php
+  package:
+    name:
+      - php7.3
+      - php7.3-common
+      - php7.3-opcache
+      - php7.3-cli
+      - php7.3-gd
+      - php7.3-curl
+      - php7.3-mysql
+      - php7.3-zip
+      - php7.3-xml
+      - php7.3-mbstring
+      - phpunit
+    state: latest
+  #notify: restart php
+
+
+- name: s3bucketconfiguratie
+  replace:
+    path: /var/applicatie/index.php
+    regexp: |-
+      $images = scandir('assets/images');
+        foreach($images as $key => $image){
+            if (!in_array($image,array(".",".."))){
+                // First item needs to get the active css class. Otherwise the carousel will not show
+                echo ($key == 2) ? '<div class="carousel-item active">' : '<div class="carousel-item">';
+                echo "<img class='d-block w-100' src='assets/images/$image'/></div>";
+            }
+        }
+    replace: |-
+      require '/var/www/html/vendor/autoload.php';
+        use \Aws\S3\S3Client;
+        use \Aws\S3\Exception\S3Exception;
+
+        $bucket = 's3phpimages2';
+        $s3 = new S3Client([
+                'version' => 'latest',
+                'region'  => 'us-east-1'
+        ]);
+        try {
+                $images = $s3->getIterator('ListObjects', array(
+                        'Bucket' => $bucket
+                        //'Delimiter' => '/',
+                        //'Prefix' => '/images/'
+                ));
+                $name = array();
+                foreach ($images as $photos){
+                        $names = $photos['Key'];
+                        array_push($name, $names);
+                }
+                foreach($name as $key => $image){
+                        echo ($key == 0) ? '<div class="carousel-item active">' : '<div class="carousel-item">';
+                        echo "<img class='d-block w-100' src='//s3phpimages.s3.amazonaws.com/$image'/></div>";
+                        }
+                } catch (S3Exception $e) { echo $e->getMessage() . PHP_EOL;
+          }

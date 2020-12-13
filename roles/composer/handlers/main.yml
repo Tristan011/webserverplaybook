@@ -1,0 +1,6 @@
+---
+- name: restart composer
+  service:
+    name: composer
+    state: restarted
+    enabled: yes
