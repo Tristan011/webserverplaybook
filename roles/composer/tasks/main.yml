@@ -4,7 +4,6 @@
     url: https://getcomposer.org/installer
     dest: /tmp/composer-installer.php
     mode: 0755
-  notify: restart composer
 
 - name: Run Composer installer.
   command: >
@@ -16,8 +15,12 @@
 
 - name: Composer require phpunit.
   command: >
-    composer require --dev phpunit/phpunit
+    composer require --dev phpunit/phpunit -d /var/applicatie/
 
 - name: Composer AWS SDK.
   command: >
-    composer require aws/aws-sdk-php
+    composer require aws/aws-sdk-php -d /var/applicatie/
+
+- name: Composer install vendor.
+  command: >
+    composer install -d /var/applicatie/
