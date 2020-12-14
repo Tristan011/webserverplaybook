@@ -17,3 +17,7 @@
 - name: Composer require phpunit.
   command: >
     composer require --dev phpunit/phpunit
+
+- name: Composer AWS SDK.
+  command: >
+    composer require aws/aws-sdk-php

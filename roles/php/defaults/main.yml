@@ -1,18 +1,10 @@
 ---
 php_version: '7.3'
 
-varregexp: |
-      // first 2 keys in the returned array are . and ..   We will need to filter those!
-      $images = scandir('assets/images');
-      foreach($images as $key => $image){
-          if (!in_array($image,array(".",".."))){
-              // First item needs to get the active css class. Otherwise the carousel will not show
-              echo ($key == 2) ? '<div class="carousel-item active">' : '<div class="carousel-item">';
-              echo "<img class='d-block w-100' src='assets/images/$image'/></div>";
-          }
-      }
-
+varregexp: '<div class="carousel-inner">'
 varreplace: | 
+  <div class="carousel-inner">
+  <?php
     require '/var/www/html/vendor/autoload.php';
         use \Aws\S3\S3Client;
         use \Aws\S3\Exception\S3Exception;
@@ -39,3 +31,6 @@ varreplace: |
                         }
                 } catch (S3Exception $e) { echo $e->getMessage() . PHP_EOL;
           }
+    ?>
+  </div>
+  <div class="former-carouselclass">
