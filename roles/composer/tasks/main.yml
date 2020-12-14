@@ -4,23 +4,29 @@
     url: https://getcomposer.org/installer
     dest: /tmp/composer-installer.php
     mode: 0755
+  become: yes
 
 - name: Run Composer installer.
+  become: yes
   command: >
     php /tmp/composer-installer.php --install-dir=/usr/local/bin --filename=composer
 
 - name: Composer update.
+  become: yes
   command: >
     composer self-update
 
 - name: Composer require phpunit.
+  become: yes
   command: >
     composer require --dev phpunit/phpunit -d /var/applicatie/
 
 - name: Composer AWS SDK.
+  become: yes
   command: >
     composer require aws/aws-sdk-php -d /var/applicatie/
 
 - name: Composer install vendor.
+  become: yes
   command: >
     composer install -d /var/applicatie/
